@@ -5,7 +5,7 @@ import Skeleton from '../components/PizzaBlock/Skeleton';
 
 import { useEffect, useState } from 'react';
 
-const Home = () => {
+const Home = ({ searchValue }) => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categoryId, setCategoryId] = useState(0);
@@ -16,6 +16,16 @@ const Home = () => {
   const [sortOrder, setSortOrder] = useState('desc');
 
   const category = categoryId !== 0 ? `category=${categoryId}` : '';
+
+  const skeleton = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
+  const pizzas = items
+    .filter((pizzaTitle) => pizzaTitle.title.toLowerCase().includes(searchValue.toLowerCase()))
+    .map((obj) => (
+      <PizzaBlock
+        key={obj.id}
+        {...obj}
+      />
+    ));
 
   useEffect(() => {
     setIsLoading(true);
@@ -45,16 +55,7 @@ const Home = () => {
         />
       </div>
       <h2 className="content__title">All pizzas</h2>
-      <div className="container__items">
-        {isLoading
-          ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
-          : items.map((obj) => (
-              <PizzaBlock
-                key={obj.id}
-                {...obj}
-              />
-            ))}
-      </div>
+      <div className="container__items">{isLoading ? skeleton : pizzas}</div>
     </div>
   );
 };
