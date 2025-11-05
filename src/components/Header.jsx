@@ -27,7 +27,7 @@ function Header({ searchValue, setSearchValue }) {
           <Link
             to="/cart"
             className="button button--cart">
-            <span>520 ₽</span>
+            <span>520 $</span>
             <div className="button__delimiter"></div>
             <svg
               width="18"

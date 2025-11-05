@@ -15,30 +15,32 @@ const Home = ({ searchValue }) => {
   });
   const [sortOrder, setSortOrder] = useState('desc');
 
-  const category = categoryId !== 0 ? `category=${categoryId}` : '';
-
   const skeleton = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
-  const pizzas = items
-    .filter((pizzaTitle) => pizzaTitle.title.toLowerCase().includes(searchValue.toLowerCase()))
-    .map((obj) => (
-      <PizzaBlock
-        key={obj.id}
-        {...obj}
-      />
-    ));
+  const pizzas = Array.isArray(items)
+    ? items.map((obj) => (
+        <PizzaBlock
+          key={obj.id}
+          {...obj}
+        />
+      ))
+    : [];
 
   useEffect(() => {
     setIsLoading(true);
+
+    const category = categoryId !== 0 ? `category=${categoryId}&` : '';
+    const search = searchValue ? `&search=${searchValue}` : '';
+
     fetch(
-      `https://68ee2739df2025af78029379.mockapi.io/items?${category}&sortBy=${sortType.sortProperty}&order=${sortOrder}`,
+      `https://68ee2739df2025af78029379.mockapi.io/items?${category}sortBy=${sortType.sortProperty}&order=${sortOrder}${search}`,
     )
       .then((res) => res.json())
       .then((arr) => {
-        setItems(arr);
+        setItems(Array.isArray(arr) ? arr : []);
         setIsLoading(false);
       });
     window.scrollTo(0, 0);
-  }, [categoryId, sortType, sortOrder, category]);
+  }, [categoryId, sortType, sortOrder, searchValue]);
 
   return (
     <div className="container">
