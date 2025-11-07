@@ -4,9 +4,10 @@ import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Pagination from '../components/Pagination';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { searchContext } from '../App';
 
-const Home = ({ searchValue }) => {
+const Home = () => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categoryId, setCategoryId] = useState(0);
@@ -16,6 +17,7 @@ const Home = ({ searchValue }) => {
     name: 'popularity',
     sortProperty: 'rating',
   });
+  const { searchValue } = useContext(searchContext);
 
   const skeleton = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
   const pizzas = Array.isArray(items)
