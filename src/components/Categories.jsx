@@ -4,11 +4,11 @@ function Categories({ value, onChangeCategory }) {
   return (
     <div className="categories">
       <ul>
-        {categories.map((categoryName, i) => (
+        {categories.map((categoryName, id) => (
           <li
-            key={i}
-            onClick={() => onChangeCategory(i)}
-            className={value === i ? 'active' : ''}>
+            key={id}
+            onClick={() => onChangeCategory(id)}
+            className={value === id ? 'active' : ''}>
             {categoryName}
           </li>
         ))}

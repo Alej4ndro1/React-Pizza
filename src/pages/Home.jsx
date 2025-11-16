@@ -6,11 +6,12 @@ import Pagination from '../components/Pagination';
 
 import { useContext, useEffect, useState } from 'react';
 import { searchContext } from '../App';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCategoryId } from '../redux/slices/filterSlice';
 
 const Home = () => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [categoryId, setCategoryId] = useState(0);
   const [sortOrder, setSortOrder] = useState('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [sortType, setSortType] = useState({
@@ -18,6 +19,13 @@ const Home = () => {
     sortProperty: 'rating',
   });
   const { searchValue } = useContext(searchContext);
+
+  const categoryId = useSelector((state) => state.filter.categoryId);
+  const dispatch = useDispatch();
+
+  const handleCategoryId = (id) => {
+    dispatch(setCategoryId(id));
+  };
 
   const skeleton = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
   const pizzas = Array.isArray(items)
@@ -51,7 +59,7 @@ const Home = () => {
       <div className="container__top">
         <Categories
           value={categoryId}
-          onChangeCategory={(id) => setCategoryId(id)}
+          onChangeCategory={handleCategoryId}
         />
         <Sort
           value={sortType}
