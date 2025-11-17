@@ -12,15 +12,11 @@ import { setCategoryId } from '../redux/slices/filterSlice';
 const Home = () => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [sortOrder, setSortOrder] = useState('desc');
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortType, setSortType] = useState({
-    name: 'popularity',
-    sortProperty: 'rating',
-  });
   const { searchValue } = useContext(searchContext);
 
-  const categoryId = useSelector((state) => state.filter.categoryId);
+  const { categoryId, sort, order } = useSelector((state) => state.filter);
+  const sortType = sort.sortProperty;
   const dispatch = useDispatch();
 
   const handleCategoryId = (id) => {
@@ -44,7 +40,7 @@ const Home = () => {
     const search = searchValue ? `&search=${searchValue}` : '';
 
     fetch(
-      `https://68ee2739df2025af78029379.mockapi.io/items?page=${currentPage}&limit=4&${category}sortBy=${sortType.sortProperty}&order=${sortOrder}${search}`,
+      `https://68ee2739df2025af78029379.mockapi.io/items?page=${currentPage}&limit=4&${category}sortBy=${sortType}&order=${order}${search}`,
     )
       .then((res) => res.json())
       .then((arr) => {
@@ -52,7 +48,7 @@ const Home = () => {
         setIsLoading(false);
       });
     window.scrollTo(0, 0);
-  }, [categoryId, sortType, sortOrder, searchValue, currentPage]);
+  }, [categoryId, searchValue, currentPage, sortType, order]);
 
   return (
     <div className="container">
@@ -61,12 +57,7 @@ const Home = () => {
           value={categoryId}
           onChangeCategory={handleCategoryId}
         />
-        <Sort
-          value={sortType}
-          onChangeSort={(id) => setSortType(id)}
-          sortOrder={sortOrder}
-          onChangeOrder={setSortOrder}
-        />
+        <Sort />
       </div>
       <h2 className="content__title">All pizzas</h2>
       <div className="container__items">{isLoading ? skeleton : pizzas}</div>
