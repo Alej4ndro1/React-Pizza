@@ -1,19 +1,23 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setShowSortList, setSortOrder, setSortProperty } from '../redux/slices/filterSlice';
 
-function Sort({ value, onChangeSort, sortOrder, onChangeOrder }) {
-  const [showSortList, setShowSortList] = useState(false);
+const list = [
+  { name: 'popularity', sortProperty: 'rating' },
+  { name: 'price', sortProperty: 'price' },
+  { name: 'name', sortProperty: 'title' },
+];
+
+function Sort() {
+  const { sort, order, showList } = useSelector((state) => state.filter);
+  const dispatch = useDispatch();
+
   const ref = useRef();
-
-  const list = [
-    { name: 'popularity', sortProperty: 'rating' },
-    { name: 'price', sortProperty: 'price' },
-    { name: 'name', sortProperty: 'title' },
-  ];
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (ref.current && !ref.current.contains(event.target)) {
-        setShowSortList(false);
+        dispatch(setShowSortList(false));
       }
     }
 
@@ -22,13 +26,13 @@ function Sort({ value, onChangeSort, sortOrder, onChangeOrder }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   });
 
-  const handleActiveSort = (value) => {
-    onChangeSort(value);
-    setShowSortList(false);
+  const handleActiveSort = (obj) => {
+    dispatch(setSortProperty(obj));
+    dispatch(setShowSortList(false));
   };
 
   const toggleSortOrder = () => {
-    onChangeOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    dispatch(setSortOrder(order === 'asc' ? 'desc' : 'asc'));
   };
 
   return (
@@ -40,7 +44,7 @@ function Sort({ value, onChangeSort, sortOrder, onChangeOrder }) {
           onClick={toggleSortOrder}
           className="sort__toggleButton">
           <svg
-            className={`sort__icon ${sortOrder === 'desc' ? 'rotated' : ''} `}
+            className={`sort__icon ${order === 'desc' ? 'rotated' : ''} `}
             width="10"
             height="6"
             viewBox="0 0 10 6"
@@ -54,12 +58,12 @@ function Sort({ value, onChangeSort, sortOrder, onChangeOrder }) {
           <b>Sort by:</b>
         </button>
         <button
-          onClick={() => setShowSortList(!showSortList)}
+          onClick={() => dispatch(setShowSortList(!showList))}
           className="button">
-          {value.name}
+          {sort.name}
         </button>
       </div>
-      {showSortList && (
+      {showList && (
         <div className="sort__popup">
           <ul>
             {list.map((obj, i) => {
@@ -67,7 +71,7 @@ function Sort({ value, onChangeSort, sortOrder, onChangeOrder }) {
                 <li
                   key={i}
                   onClick={() => handleActiveSort(obj)}
-                  className={value.sortProperty === obj.sortProperty ? 'active' : ''}>
+                  className={sort.sortProperty === obj.sortProperty ? 'active' : ''}>
                   {obj.name}
                 </li>
               );
