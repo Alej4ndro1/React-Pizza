@@ -11,14 +11,18 @@ import { setCategoryId } from '../redux/slices/filterSlice';
 import axios from 'axios';
 
 const Home = () => {
+  const dispatch = useDispatch();
+
+  const {
+    categoryId,
+    sort: { sortProperty: sortType },
+    order,
+    currentPage,
+  } = useSelector((state) => state.filter);
+
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
   const { searchValue } = useContext(searchContext);
-
-  const { categoryId, sort, order } = useSelector((state) => state.filter);
-  const sortType = sort.sortProperty;
-  const dispatch = useDispatch();
 
   const handleCategoryId = (id) => {
     dispatch(setCategoryId(id));
@@ -62,7 +66,7 @@ const Home = () => {
       </div>
       <h2 className="content__title">All pizzas</h2>
       <div className="container__items">{isLoading ? skeleton : pizzas}</div>
-      <Pagination setCurrentPage={setCurrentPage} />
+      <Pagination />
     </div>
   );
 };

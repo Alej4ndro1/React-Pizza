@@ -8,6 +8,7 @@ const initialState = {
   },
   order: 'desc',
   showList: false,
+  currentPage: 1,
 };
 
 const filterSlice = createSlice({
@@ -26,10 +27,13 @@ const filterSlice = createSlice({
     setShowSortList(state, action) {
       state.showList = action.payload;
     },
+    setCurrentPage(state, action) {
+      state.currentPage = action.payload;
+    },
   },
 });
 
-export const { setCategoryId, setSortProperty, setSortOrder, setShowSortList } =
+export const { setCategoryId, setSortProperty, setSortOrder, setShowSortList, setCurrentPage } =
   filterSlice.actions;
 
 export default filterSlice.reducer;
