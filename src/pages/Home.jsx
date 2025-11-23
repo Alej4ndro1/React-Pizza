@@ -1,17 +1,20 @@
 import Categories from '../components/Categories';
-import Sort from '../components/Sort';
+import Sort, { sortList } from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Pagination from '../components/Pagination';
 
 import { useContext, useEffect, useState } from 'react';
-import { searchContext } from '../App';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCategoryId } from '../redux/slices/filterSlice';
+import { useNavigate } from 'react-router-dom';
+import { setCategoryId, setFilters } from '../redux/slices/filterSlice';
+import { searchContext } from '../App';
 import axios from 'axios';
+import qs from 'qs';
 
 const Home = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     categoryId,
@@ -39,6 +42,21 @@ const Home = () => {
     : [];
 
   useEffect(() => {
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substring(1));
+
+      const sort = sortList.find((obj) => obj.sortProperty === params.sortType);
+
+      dispatch(
+        setFilters({
+          ...params,
+          sort,
+        }),
+      );
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
     setIsLoading(true);
 
     const category = categoryId !== 0 ? `category=${categoryId}&` : '';
@@ -54,6 +72,16 @@ const Home = () => {
       });
     window.scrollTo(0, 0);
   }, [categoryId, searchValue, currentPage, sortType, order]);
+
+  useEffect(() => {
+    const queryString = qs.stringify({
+      categoryId,
+      sortType,
+      currentPage,
+    });
+
+    navigate(`?${queryString}`);
+  }, [categoryId, searchValue, currentPage, sortType, order, navigate]);
 
   return (
     <div className="container">

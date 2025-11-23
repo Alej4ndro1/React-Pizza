@@ -2,14 +2,14 @@ import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setShowSortList, setSortOrder, setSortProperty } from '../redux/slices/filterSlice';
 
-const list = [
+export const sortList = [
   { name: 'popularity', sortProperty: 'rating' },
   { name: 'price', sortProperty: 'price' },
   { name: 'name', sortProperty: 'title' },
 ];
 
 function Sort() {
-  const { sort, order, showList } = useSelector((state) => state.filter);
+  const { sort, order, showSortList } = useSelector((state) => state.filter);
   const dispatch = useDispatch();
 
   const ref = useRef();
@@ -58,15 +58,15 @@ function Sort() {
           <b>Sort by:</b>
         </button>
         <button
-          onClick={() => dispatch(setShowSortList(!showList))}
+          onClick={() => dispatch(setShowSortList(!showSortList))}
           className="button">
           {sort.name}
         </button>
       </div>
-      {showList && (
+      {showSortList && (
         <div className="sort__popup">
           <ul>
-            {list.map((obj, i) => {
+            {sortList.map((obj, i) => {
               return (
                 <li
                   key={i}
