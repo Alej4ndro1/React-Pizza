@@ -4,7 +4,7 @@ import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Pagination from '../components/Pagination';
 
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setCategoryId, setFilters } from '../redux/slices/filterSlice';
@@ -15,6 +15,7 @@ import qs from 'qs';
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const isSearch = useRef(false);
 
   const {
     categoryId,
@@ -41,22 +42,7 @@ const Home = () => {
       ))
     : [];
 
-  useEffect(() => {
-    if (window.location.search) {
-      const params = qs.parse(window.location.search.substring(1));
-
-      const sort = sortList.find((obj) => obj.sortProperty === params.sortType);
-
-      dispatch(
-        setFilters({
-          ...params,
-          sort,
-        }),
-      );
-    }
-  }, [dispatch]);
-
-  useEffect(() => {
+  const fetchPizzas = useCallback(() => {
     setIsLoading(true);
 
     const category = categoryId !== 0 ? `category=${categoryId}&` : '';
@@ -70,8 +56,32 @@ const Home = () => {
         setItems(res.data);
         setIsLoading(false);
       });
+  }, [categoryId, currentPage, order, searchValue, sortType]);
+
+  useEffect(() => {
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substring(1));
+
+      const sort = sortList.find((obj) => obj.sortProperty === params.sortType);
+
+      dispatch(
+        setFilters({
+          ...params,
+          sort,
+        }),
+      );
+      isSearch.current = true;
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
     window.scrollTo(0, 0);
-  }, [categoryId, searchValue, currentPage, sortType, order]);
+
+    if (isSearch.current) {
+      fetchPizzas();
+    }
+    isSearch.current = false;
+  }, [categoryId, searchValue, currentPage, sortType, order, fetchPizzas]);
 
   useEffect(() => {
     const queryString = qs.stringify({
