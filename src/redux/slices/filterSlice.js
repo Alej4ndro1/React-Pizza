@@ -33,7 +33,7 @@ const filterSlice = createSlice({
     setFilters(state, action) {
       state.categoryId = Number(action.payload.categoryId);
       state.sort = action.payload.sort;
-      state.currentPage = Number(action.payload.currentPage);
+      state.currentPage = parseInt(action.payload.currentPage) || 1;
     },
   },
 });

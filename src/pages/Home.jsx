@@ -15,7 +15,8 @@ import qs from 'qs';
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isSearch = useRef(false);
+
+  const isMounted = useRef(false);
 
   const {
     categoryId,
@@ -56,42 +57,45 @@ const Home = () => {
         setItems(res.data);
         setIsLoading(false);
       });
-  }, [categoryId, currentPage, order, searchValue, sortType]);
+  }, [categoryId, searchValue, currentPage, sortType, order]);
 
   useEffect(() => {
+    console.log('Effect: 1');
+
     if (window.location.search) {
       const params = qs.parse(window.location.search.substring(1));
 
-      const sort = sortList.find((obj) => obj.sortProperty === params.sortType);
+      const sort = sortList.find((obj) => obj.sortProperty === params.sortType) || sortList[0];
 
       dispatch(
         setFilters({
-          ...params,
+          categoryId: Number(params.categoryId) || 0,
           sort,
+          currentPage: Number(params.currentPage) || 1,
         }),
       );
-      isSearch.current = true;
-    }
+    } else isMounted.current = true;
   }, [dispatch]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-
-    if (isSearch.current) {
+    console.log('Effect: 2');
+    if (isMounted.current) {
       fetchPizzas();
-    }
-    isSearch.current = false;
-  }, [categoryId, searchValue, currentPage, sortType, order, fetchPizzas]);
+    } else isMounted.current = true;
+  }, [fetchPizzas]);
 
   useEffect(() => {
-    const queryString = qs.stringify({
-      categoryId,
-      sortType,
-      currentPage,
-    });
+    console.log('Effect: 3');
+    const params = {};
 
-    navigate(`?${queryString}`);
-  }, [categoryId, searchValue, currentPage, sortType, order, navigate]);
+    if (categoryId !== 0) params.categoryId = categoryId;
+    if (sortType !== 'rating') params.sortType = sortType;
+    if (currentPage !== 1) params.currentPage = currentPage;
+
+    const qsString = qs.stringify(params);
+
+    navigate(qsString ? `?${qsString}` : '');
+  }, [categoryId, sortType, currentPage, navigate]);
 
   return (
     <div className="container">
