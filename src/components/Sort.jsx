@@ -12,11 +12,11 @@ function Sort() {
   const { sort, order, showSortList } = useSelector((state) => state.filter);
   const dispatch = useDispatch();
 
-  const ref = useRef();
+  const sortRef = useRef();
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
+      if (sortRef.current && !sortRef.current.contains(event.target)) {
         dispatch(setShowSortList(false));
       }
     }
@@ -37,7 +37,7 @@ function Sort() {
 
   return (
     <div
-      ref={ref}
+      ref={sortRef}
       className="sort">
       <div className="sort__label">
         <button

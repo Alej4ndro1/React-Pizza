@@ -60,8 +60,6 @@ const Home = () => {
   }, [categoryId, searchValue, currentPage, sortType, order]);
 
   useEffect(() => {
-    console.log('Effect: 1');
-
     if (window.location.search) {
       const params = qs.parse(window.location.search.substring(1));
 
@@ -78,14 +76,12 @@ const Home = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log('Effect: 2');
     if (isMounted.current) {
       fetchPizzas();
     } else isMounted.current = true;
   }, [fetchPizzas]);
 
   useEffect(() => {
-    console.log('Effect: 3');
     const params = {};
 
     if (categoryId !== 0) params.categoryId = categoryId;
