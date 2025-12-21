@@ -43,20 +43,17 @@ const Home = () => {
       ))
     : [];
 
-  const fetchPizzas = useCallback(() => {
+  const fetchPizzas = useCallback(async () => {
     setIsLoading(true);
 
     const category = categoryId !== 0 ? `category=${categoryId}&` : '';
     const search = searchValue ? `&search=${searchValue}` : '';
 
-    axios
-      .get(
-        `https://68ee2739df2025af78029379.mockapi.io/items?page=${currentPage}&limit=4&${category}sortBy=${sortType}&order=${order}${search}`,
-      )
-      .then((res) => {
-        setItems(res.data);
-        setIsLoading(false);
-      });
+    const res = await axios.get(
+      `https://68ee2739df2025af78029379.mockapi.io/items?page=${currentPage}&limit=4&${category}sortBy=${sortType}&order=${order}${search}`,
+    );
+    setItems(res.data);
+    setIsLoading(false);
   }, [categoryId, searchValue, currentPage, sortType, order]);
 
   useEffect(() => {
