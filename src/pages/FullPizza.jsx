@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const FullPizza = () => {
   const [pizza, setPizza] = useState();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchPizza() {
@@ -12,12 +13,13 @@ export const FullPizza = () => {
         const { data } = await axios.get('https://68ee2739df2025af78029379.mockapi.io/items/' + id);
         setPizza(data);
       } catch (error) {
-        alert(error);
+        alert('No such pizza found');
+        navigate('/');
       }
     }
 
     fetchPizza();
-  }, [id]);
+  }, [id, navigate]);
 
   if (!pizza) {
     return 'Loading...';
